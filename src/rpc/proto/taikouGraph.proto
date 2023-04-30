@@ -1,0 +1,132 @@
+//
+// Created by l1nkkk on 2023/3/21.
+//
+syntax = "proto3";
+option go_package = "./;proto";
+
+
+message RpcStatus{
+  uint32 code = 1;
+  optional string msg = 2;
+}
+
+message RpcVertex{
+  uint32 tagID = 1;
+  optional string tagStr = 2;
+  uint64 vid = 3;
+  string property = 4;
+}
+
+message RpcEdge{
+  uint32 tagID = 1;
+  optional string tagStr = 2;
+  uint64 vid = 3;
+  uint32 edgeTypeID = 4;
+  optional string edgeTypeStr = 5;
+  string direction = 6;
+  uint32 peerTagID = 7;
+  optional string peerTagStr = 8;
+  uint64 peerVid = 9;
+  uint64 rank = 10;
+  string property = 11;
+}
+
+message RpcSubGraph{
+  RpcVertex ver = 1;
+  repeated RpcEdge inEdge = 2;
+  repeated RpcEdge outEdge = 3;
+}
+
+message PingReq{
+  string treat = 1;
+}
+
+message PingResp{
+  RpcStatus s = 1;
+  string msg = 2;
+}
+
+message GetSingleVertexReq{
+  optional string tag = 1;
+  optional string propType = 2;
+  optional string keyWord = 3;
+}
+
+message GetSingleVertexResp{
+  RpcStatus s = 1;
+  optional RpcVertex ver = 2;
+}
+
+message GetSubGraphReq{
+  uint32 tagID = 1;
+  uint64 vid = 2;
+}
+
+message GetSubGraphResp{
+  RpcStatus s = 1;
+  optional RpcSubGraph sg = 2;
+}
+
+message GetEdgeListReq{
+  uint32 tagID = 1;
+  uint64 vid = 2;
+}
+
+message GetEdgeListResp{
+  RpcStatus s = 1;
+  repeated RpcEdge edgeList = 2;
+}
+
+// write
+message WriteVertex{
+  string tag = 1;
+  string uniqueName = 2;
+  string property = 3;
+}
+
+message WriteEdge{
+  string vertexTag = 1;
+  string vertexName = 2;
+  uint32 direction = 3;
+  string edgeType = 4;
+  string vertexTagPeer = 5;
+  string vertexNamePeer = 6;
+  string props = 7;
+}
+
+message CreateKGReq{
+  string kgName = 1;
+  string meta = 2;
+}
+
+message CreateKGResp{
+  RpcStatus s = 1;
+}
+
+message PutVertexListReq{
+  repeated WriteVertex vertexList = 1;
+}
+
+message PutVertexListResp{
+  RpcStatus s = 1;
+}
+
+message PutEdgeListReq{
+  repeated WriteEdge edgeList = 1;
+}
+
+message PutEdgeListResp{
+  RpcStatus s = 1;
+}
+
+service TaiKou {
+  rpc Ping(PingReq) returns(PingResp){}
+  rpc GetSingleVertex(GetSingleVertexReq) returns(GetSingleVertexResp){}
+  rpc GetSubGraph(GetSubGraphReq) returns(GetSubGraphResp){}
+  rpc GetEdgeList(GetEdgeListReq) returns(GetEdgeListResp){}
+
+  rpc CreateKG(CreateKGReq) returns(CreateKGResp){}
+  rpc PutVertexList(PutVertexListReq) returns(PutVertexListResp){}
+  rpc PutEdgeList(PutEdgeListReq) returns(PutEdgeListResp){}
+
+}
